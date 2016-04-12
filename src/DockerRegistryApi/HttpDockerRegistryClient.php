@@ -48,7 +48,7 @@ class HttpDockerRegistryClient
      * @param PsrHttpRequestFactory $psrHttpRequestFactoryRegistry
      * @param PsrHttpRequestFactory $psrHttpRequestFactoryAuthorization
      */
-    public function __construct($username, $password, $registryServiceName, HttpClient $client, PsrHttpRequestFactory $psrHttpRequestFactoryRegistry, PsrHttpRequestFactory $psrHttpRequestFactoryAuthorization)
+    public function __construct($username, $password, $registryServiceName, HttpClient $client, PsrHttpRequestFactory $psrHttpRequestFactoryRegistry, PsrHttpRequestFactory $psrHttpRequestFactoryAuthorization = null)
     {
         $this->username = $username;
         $this->password = $password;
@@ -66,18 +66,21 @@ class HttpDockerRegistryClient
      */
     public function handle(Request $request)
     {
-        $authorizationRequest = $this->psrHttpRequestFactoryAuthorization->toPsrRequest(new Authorization($this->psrHttpRequestFactoryRegistry->host(), $this->registryServiceName, $this->username, $this->password, $request->scope()));
-        $response = $this->client->sendRequest($authorizationRequest);
-
-        if ($response->getStatusCode() !== 200) {
-            throw new DockerRegistryException("Can't authorize with given credentials: " . $response->getBody()->getContents());
-        }
-
-        $token = json_decode($response->getBody()->getContents(), true);
-        $token = $token['token'];
-
         $psr7Request = $this->psrHttpRequestFactoryRegistry->toPsrRequest($request);
-        $psr7Request = $psr7Request->withHeader('Authorization', 'Bearer ' . $token);
+
+        if ($this->psrHttpRequestFactoryAuthorization) {
+            $authorizationRequest = $this->psrHttpRequestFactoryAuthorization->toPsrRequest(new Authorization($this->psrHttpRequestFactoryRegistry->host(), $this->registryServiceName, $this->username, $this->password, $request->scope()));
+            $response = $this->client->sendRequest($authorizationRequest);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new DockerRegistryException("Can't authorize with given credentials: ".$response->getBody()->getContents());
+            }
+
+            $token = json_decode($response->getBody()->getContents(), true);
+            $token = $token['token'];
+
+            $psr7Request = $psr7Request->withHeader('Authorization', 'Bearer '.$token);
+        }
 
         return $this->client->sendRequest($psr7Request);
     }
