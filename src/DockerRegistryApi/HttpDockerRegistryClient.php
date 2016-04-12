@@ -3,7 +3,6 @@
 namespace Madkom\DockerRegistryApi;
 
 use Http\Client\HttpClient;
-use Madkom\DockerRegistryApi\Request\Authorization;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -18,44 +17,26 @@ class HttpDockerRegistryClient
      */
     private $client;
     /**
-     * @var string
-     */
-    private $username;
-    /**
-     * @var string
-     */
-    private $registryServiceName;
-    /**
-     * @var string
-     */
-    private $password;
-    /**
      * @var PsrHttpRequestFactory
      */
-    private $psrHttpRequestFactoryAuthorization;
+    private $psrHttpRequestFactory;
     /**
-     * @var PsrHttpRequestFactory
+     * @var AuthorizationService
      */
-    private $psrHttpRequestFactoryRegistry;
+    private $authorizationService;
 
     /**
      * HttpDockerRegistryClient constructor.
      *
-     * @param string                $username
-     * @param string                $password
-     * @param string                $registryServiceName
      * @param HttpClient            $client
-     * @param PsrHttpRequestFactory $psrHttpRequestFactoryRegistry
-     * @param PsrHttpRequestFactory $psrHttpRequestFactoryAuthorization
+     * @param PsrHttpRequestFactory $psrHttpRequestFactory
+     * @param AuthorizationService  $authorizationService
      */
-    public function __construct($username, $password, $registryServiceName, HttpClient $client, PsrHttpRequestFactory $psrHttpRequestFactoryRegistry, PsrHttpRequestFactory $psrHttpRequestFactoryAuthorization)
+    public function __construct(HttpClient $client, PsrHttpRequestFactory $psrHttpRequestFactory, AuthorizationService $authorizationService)
     {
-        $this->username = $username;
-        $this->password = $password;
-        $this->registryServiceName = $registryServiceName;
-        $this->client = $client;
-        $this->psrHttpRequestFactoryRegistry = $psrHttpRequestFactoryRegistry;
-        $this->psrHttpRequestFactoryAuthorization = $psrHttpRequestFactoryAuthorization;
+        $this->client                = $client;
+        $this->psrHttpRequestFactory = $psrHttpRequestFactory;
+        $this->authorizationService  = $authorizationService;
     }
 
     /**
@@ -66,20 +47,12 @@ class HttpDockerRegistryClient
      */
     public function handle(Request $request)
     {
-        $authorizationRequest = $this->psrHttpRequestFactoryAuthorization->toPsrRequest(new Authorization($this->psrHttpRequestFactoryRegistry->host(), $this->registryServiceName, $this->username, $this->password, $request->scope()));
-        $response = $this->client->sendRequest($authorizationRequest);
+        $authorizationHeader = $this->authorizationService->authorizationHeader($this->client, $request);
 
-        if ($response->getStatusCode() !== 200) {
-            throw new DockerRegistryException("Can't authorize with given credentials: " . $response->getBody()->getContents());
-        }
+        $psrRequest = $this->psrHttpRequestFactory->toPsrRequest($request);
+        $psrRequest = $psrRequest->withHeader('Authorization', $authorizationHeader);
 
-        $token = json_decode($response->getBody()->getContents(), true);
-        $token = $token['token'];
-
-        $psr7Request = $this->psrHttpRequestFactoryRegistry->toPsrRequest($request);
-        $psr7Request = $psr7Request->withHeader('Authorization', 'Bearer ' . $token);
-
-        return $this->client->sendRequest($psr7Request);
+        return $this->client->sendRequest($psrRequest);
     }
 
 }

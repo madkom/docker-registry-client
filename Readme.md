@@ -4,7 +4,7 @@
 
 PHP Client for [Docker Registry](https://docs.docker.com/registry/spec/api/).
  
-For now it only contains possibility to retrieve image tags. Feel free to add more `request types`.
+You can find all possible action under `Madkom\DockerRegistryApi\Request`. Feel free to add new ones.
 
 ### Usage
 Check `usage` catalog for usage examples.
