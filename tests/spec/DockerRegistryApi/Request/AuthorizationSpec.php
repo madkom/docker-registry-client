@@ -44,6 +44,8 @@ class AuthorizationSpec extends ObjectBehavior
             'Authorization' => 'Basic RnJhbmVrOk1hamVoYW4='
         ]);
         $this->scope()->shouldReturn($this->scope);
+        $this->method()->shouldReturn('GET');
+        $this->data()->shouldReturn([]);
     }
 
 
