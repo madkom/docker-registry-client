@@ -4,3 +4,4 @@
 tests/coverage/
 !tests/coverage/.gitkeep
 storage
+/usage/private-usage.php

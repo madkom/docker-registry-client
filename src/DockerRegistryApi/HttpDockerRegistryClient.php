@@ -50,7 +50,10 @@ class HttpDockerRegistryClient
         $authorizationHeader = $this->authorizationService->authorizationHeader($this->client, $request);
 
         $psrRequest = $this->psrHttpRequestFactory->toPsrRequest($request);
-        $psrRequest = $psrRequest->withHeader('Authorization', $authorizationHeader);
+
+        if ($authorizationHeader) {
+            $psrRequest = $psrRequest->withHeader('Authorization', $authorizationHeader);
+        }
 
         return $this->client->sendRequest($psrRequest);
     }

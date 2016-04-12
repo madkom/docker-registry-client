@@ -53,7 +53,16 @@ class HttpDockerRegistryClientSpec extends ObjectBehavior
         $psrResourceRequest->withHeader('Authorization', 'Basic someHash')->shouldBeCalledTimes(1)->willReturn($psrResourceRequest);
 
         $this->client->sendRequest($psrResourceRequest)->shouldBeCalledTimes(1);
+        $this->handle($resourceRequest);
+    }
 
+    function it_should_add_no_authorization_if_authorization_service_return_null(Request $resourceRequest, RequestInterface $psrResourceRequest)
+    {
+        $this->authorizationService->authorizationHeader($this->client, $resourceRequest)->willReturn(null);
+
+        $this->psrHttpRequestFactory->toPsrRequest($resourceRequest)->willReturn($psrResourceRequest);
+
+        $this->client->sendRequest($psrResourceRequest)->shouldBeCalledTimes(1);
         $this->handle($resourceRequest);
     }
 
