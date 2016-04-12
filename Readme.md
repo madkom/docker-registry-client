@@ -1,6 +1,10 @@
 # Docker-Registry-API    
+![PHP 7.0](https://img.shields.io/badge/PHP-7.0-8C9CB6.svg?style=flat)
 [![Build Status](https://travis-ci.org/madkom/docker-registry-client.svg?branch=master)](https://travis-ci.org/madkom/docker-registry-client)
-
+[![Coverage Status](https://coveralls.io/repos/github/madkom/docker-registry-client/badge.svg?branch=master)](https://coveralls.io/github/madkom/docker-registry-client?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/madkom/docker-registry-api/v/stable)](https://packagist.org/packages/madkom/docker-registry-api)
+[![License](https://poser.pugx.org/madkom/docker-registry-api/license)](https://packagist.org/packages/madkom/docker-registry-api)
+[![Total Downloads](https://poser.pugx.org/madkom/docker-registry-api/downloads)](https://packagist.org/packages/madkom/docker-registry-api)
 
 PHP Client for [Docker Registry](https://docs.docker.com/registry/spec/api/).
  
