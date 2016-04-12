@@ -9,6 +9,7 @@ use Madkom\DockerRegistryApi\Request;
  * Interface AuthorizationService
  * @package spec\Madkom\DockerRegistryApi
  * @author  Dariusz Gafka <d.gafka@madkom.pl>
+ * @since 0.8.0
  */
 interface AuthorizationService
 {

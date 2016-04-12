@@ -7,12 +7,12 @@ use Madkom\DockerRegistryApi\AuthorizationService;
 use Madkom\DockerRegistryApi\DockerRegistryException;
 use Madkom\DockerRegistryApi\PsrHttpRequestFactory;
 use Madkom\DockerRegistryApi\Request;
-use Psr\Http\Message\RequestInterface;
 
 /**
  * Class TokenAuthorization
  * @package Madkom\DockerRegistryApi\Authorization
  * @author  Dariusz Gafka <d.gafka@madkom.pl>
+ * @since 0.8.0
  */
 class TokenAuthorization implements AuthorizationService
 {

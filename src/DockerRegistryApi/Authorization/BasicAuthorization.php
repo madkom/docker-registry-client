@@ -10,6 +10,7 @@ use Madkom\DockerRegistryApi\Request;
  * Class BasicAuthorization
  * @package Madkom\DockerRegistryApi\Authorization
  * @author  Dariusz Gafka <d.gafka@madkom.pl>
+ * @since 0.8.0
  */
 class BasicAuthorization implements AuthorizationService
 {
